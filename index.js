@@ -282,7 +282,6 @@ io.on("connection", (socket) => {
     if (!room.dying) advanceTurn(room);
   });
         return;
-      }
         target.dead = true;
         io.to(room.id).emit("player_dead", { name: target.name, role: target.role });
       }
