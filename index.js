@@ -326,7 +326,6 @@ function createRoom(roomId) {
     dying: null
   };
 };
-};
 }
 
 function createPlayer(id, name) {
