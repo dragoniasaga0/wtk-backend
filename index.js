@@ -325,7 +325,6 @@ function createRoom(roomId) {
     pendingAttack: null,
     dying: null
   };
-};
 }
 
 function createPlayer(id, name) {
