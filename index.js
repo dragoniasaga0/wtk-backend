@@ -475,11 +475,6 @@ io.on("connection", (socket) => {
     return rangeMap[card] || 0;
   }
   
-  server.listen(PORT, () => {
-    console.log(`WTK Server running on port ${PORT}`);
-  });
-  
-  
   function killPlayer(room, player) {
     if (player.dead) return;
     player.dead = true;
