@@ -257,30 +257,34 @@ io.on("connection", (socket) => {
     advanceTurn(room);
   });
 
-  socket.on("defend_result", ({ success }) => {
-    const room = getRoomBySocket(socket.id);
-    if (!room || !room.pendingAttack) return;
-    const { from, to } = room.pendingAttack;
-    if (to !== socket.id) return;
+socket.on("defend_result", ({ success }) => {
+  const room = getRoomBySocket(socket.id);
+  if (!room || !room.pendingAttack) return;
 
-    const target = room.players.find(p => p.id === to);
-    const attacker = room.players.find(p => p.id === from);
-    if (!target || !attacker || target.dead) return;
+  const { from, to } = room.pendingAttack;
+  if (to !== socket.id) return;
 
-    if (!success) {
-      target.hp -= 1;
-      if (target.hp <= 0) {
-        room.dying = target.id;
-        io.to(room.id).emit("dying", { name: target.name });
-        return;
-      }
-    } else {
-      room.discard.push("หลบหลีก");
+  const target = room.players.find(p => p.id === to);
+  const attacker = room.players.find(p => p.id === from);
+  if (!target || !attacker || target.dead) return;
+
+  if (!success) {
+    target.hp -= 1;
+    if (target.hp <= 0) {
+      target.dead = true;
+      room.dying = target.id;
+      io.to(room.id).emit("dying", { name: target.name });
+      io.to(room.id).emit("player_dead", { name: target.name, role: target.role });
     }
+  } else {
+    room.discard.push("หลบหลีก");
+  }
 
-    room.pendingAttack = null;
-    if (!room.dying) advanceTurn(room);
-  });
+  room.pendingAttack = null;
+  if (!room.dying) advanceTurn(room);
+  io.to(room.id).emit("players_update", room.players);
+});
+
         return;
         target.dead = true;
         io.to(room.id).emit("player_dead", { name: target.name, role: target.role });
